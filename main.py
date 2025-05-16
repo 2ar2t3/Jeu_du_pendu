@@ -15,8 +15,8 @@ def Choix_mot(Liste):
     """Définitiojn d'une fonction qui choisit un mot parmi la liste fournie et le retourne sans ses accents."""
     Mot_a_trouver = Liste[random.randint(0, len(Liste) - 1)] #Choix d'un mot au hasard dans la liste des mots.
 
-    lettres_accentuées = "àâäéèêëîïôöùûüçÀÂÄÉÈÊËÎÏÔÖÙÛÜÇ" #Création de deux chaines de charactères contenant les accents possibles et leurs équivalents en veillant à bien faire correspondre les indices.
-    lettres_non_accentuées = "aaaeeeeiioouuucAAAEEEEIIOOUUUC"
+    lettres_accentuées = "àâäéèêëîïôöùûüç" #Création de deux chaines de charactères contenant les accents possibles et leurs équivalents en veillant à bien faire correspondre les indices.
+    lettres_non_accentuées = "aaaeeeeiioouuuc"
     mot_normalisé =""
 
     for lettre in Mot_a_trouver:  #On itère sur chaque lettre du mot initial.
@@ -36,36 +36,57 @@ def Affichage_mot(lettres_testees, mot):
             a_afficher += "_"
     print(a_afficher)
 
+    if not "_" in a_afficher: #Cette partie permet de déterminer si le mot à été trouvé (servira pour la suite du code).
+        return True
+    return False
+
 def jeu():
     """ Fonction principale du jeu. """
-    mot_a_deviner = Choix_mot(Lecture_fichier()) #Création d'une variable locale dans la fonction.
-    Vies = 6
-    Erreurs = 0
-    Bonnes_reponses = 0
-    Lettres_testées = []
-    Victore = False
 
-    test = 0
+    jeu_en_cours = True
 
-    while Erreurs < Vies or Victore:
-        Affichage_mot(Lettres_testées, mot_a_deviner)
-        Lettre = input("Veuillez entrer une lettre : ")
-        Lettres_testées.append(Lettre)
+    while jeu_en_cours: #Boucle principale du jeu, on sort lorsque le joueur ne souhaite plus jouer.
 
-        if Lettre in mot_a_deviner:
-            Bonnes_reponses += 1
-            if Bonnes_reponses == len(mot_a_deviner):
-                print(f'Félicitations, tu as trouvé le mot secret qui était : {mot_a_deviner} !')
-                Victore = True
-                break
-            random.choice((print("Bien joué"),print("Bravo"),print("Joli coup")))
-            print(f'La lettre {Lettre} est bel et bien dans le mot secret !')
-        else:
-            random.choice((print("Aïe"),print("Raté"),print("C'est pas bon")))
-            print(f'La lettre {Lettre} n\'est pas dans le mot secret !')
-            Erreurs += 1
+        mot_a_deviner = Choix_mot(Lecture_fichier())  # Création d'une variable locale dans la fonction.
+        # Définition de pluisieurs variables qui serviront par la suite.
+        Vies = 6
+        Erreurs = 0
+        Tours = 0
+        Bonnes_reponses = 0
+        Lettres_testées = []
 
+        while Erreurs < Vies: #Boucle de la partie en cours.
+            if Tours == 0: #On écrit un message d'encouragement au premier tour.
+                print("La partie commence, bonne chance !")
+                print(f'Le mot secret contient {len(mot_a_deviner)} lettres, essayez de les deviner, vous avez 6 essais.')
+            else:
+                print(f'\nIl vous reste {Vies - Erreurs} essais.')
+                print(f'Lettres déjà essayées : {Lettres_testées}')
 
+            mot_trouvé = Affichage_mot(Lettres_testées, mot_a_deviner)#Affichage du mot
 
+            Lettre = input("Veuillez entrer une lettre à essayer : ")
+            Lettres_testées.append(Lettre)
+            Tours += 1
+
+            if Lettre in mot_a_deviner: #L'utilisateur à trouvé une lettre dans le mot secret.
+                Bonnes_reponses += 1
+                if mot_trouvé: #L'utilisateur à trouvé le mot entier.
+                    print(f'\nFélicitations, vous avez trouvé le mot secret qui était : {mot_a_deviner} !')
+                    break
+                print(random.choice(["\nBien joué !", "\nBravo !", "\nJoli coup !"]))
+                print(f'La lettre {Lettre} est bel et bien dans le mot secret.')
+
+            else: #L'utilisateur n'a pas trouvé de lettre dans le mot secret.
+                print(random.choice(["\nAïe..", "\nC'est raté.", "\nCe n'est pas bon.."]))
+                print(f'La lettre {Lettre} n\'est pas dans le mot secret.')
+                Erreurs += 1
+
+        if not Affichage_mot(Lettres_testées, mot_a_deviner):
+            print("La partie est terminée, vous avez perdu..")
+            print(f'Le mot à trouver était {mot_a_deviner}.')
+
+        if input("\nVoulez vous refaire une partie ? ('oui' ou 'non') :\n") == 'non':
+            break
 
 jeu()
