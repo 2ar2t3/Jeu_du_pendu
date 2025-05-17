@@ -3,11 +3,13 @@ import random
 
 def Lecture_fichier():
     """Définition  d'une fonction qui lit le fichier de mots et le retourne sous forme de liste"""
-    if input("Avez vous un fichier contenant une liste de mots pour jouer ? ('oui' ou 'non') : ") == "oui": # Demande à l'utilisateur si il poss_de une liste de mots.
-        Nom_fichier = input("Veuillez entrer le nom du fichier contenant la liste des mots (avec l'extension): ")
+    if input("Avez vous un fichier personnel .txt contenant une liste de mots pour jouer ? ('oui' ou 'non') : ") == "oui": # Demande à l'utilisateur si il poss_de une liste de mots.
+        Nom_fichier = input("Veuillez entrer son nom (sans l'extention): ")
     else:
-        Nom_fichier = "Liste_de_mots.txt" #Utilisation de la liste originale.
-    Liste_mots = open(f'{Nom_fichier}', 'r', encoding='utf-8').read().split() #Ouverture du fichier, lecture et transformation de la chaine de charactères en une liste de mots.
+        Nom_fichier = "Liste_de_mots" #Utilisation de la liste originale.
+
+    # Ouverture du fichier, lecture et transformation de la chaine de charactères en une liste de mots.
+    Liste_mots = open(f'{Nom_fichier}.txt', 'r', encoding='utf-8').read().split()
     return Liste_mots
 
 
@@ -52,7 +54,6 @@ def jeu():
         Vies = 6
         Erreurs = 0
         Tours = 0
-        Bonnes_reponses = 0
         Lettres_testées = []
 
         while Erreurs < Vies: #Boucle de la partie en cours.
@@ -70,7 +71,6 @@ def jeu():
             Tours += 1
 
             if Lettre in mot_a_deviner: #L'utilisateur à trouvé une lettre dans le mot secret.
-                Bonnes_reponses += 1
                 if mot_trouvé: #L'utilisateur à trouvé le mot entier.
                     print(f'\nFélicitations, vous avez trouvé le mot secret qui était : {mot_a_deviner} !')
                     break
@@ -79,14 +79,15 @@ def jeu():
 
             else: #L'utilisateur n'a pas trouvé de lettre dans le mot secret.
                 print(random.choice(["\nAïe..", "\nC'est raté.", "\nCe n'est pas bon.."]))
-                print(f'La lettre {Lettre} n\'est pas dans le mot secret.')
+                print(f"La lettre '{Lettre}' n'est pas dans le mot secret.")
                 Erreurs += 1
 
         if not Affichage_mot(Lettres_testées, mot_a_deviner):
-            print("La partie est terminée, vous avez perdu..")
-            print(f'Le mot à trouver était {mot_a_deviner}.')
+            print("\nLa partie est terminée, vous avez perdu..")
+            print(f"Le mot à trouver était '{mot_a_deviner}'.")
 
-        if input("\nVoulez vous refaire une partie ? ('oui' ou 'non') :\n") == 'non':
+        if input("\nSouhaitez-vous faire une nouvelle partie ? ('oui' / 'non') :\n") == 'non':
             break
+    print("\nTrès bien, merci d'avoir joué au jeu du pendu !")
 
 jeu()
