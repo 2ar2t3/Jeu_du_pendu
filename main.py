@@ -102,16 +102,29 @@ def jeu():
                       f"\nVoici un indice : la lettre '{lettre_bonus}' "
                       "n'est pas dans le mot secret.")
 
+            #Boucle de test de validité de la lettre entrée par l'utilisateur.
             while True:
                 try:
-                    lettre = input("\nVeuillez entrer une lettre à essayer : ")
+                    lettre = input("\nVeuillez entrer une lettre à essayer : ").lower()
+
+                    #La lettre ne fait pas partie de l'alphabet
                     if lettre not in alphabet :
                         raise ValueError
+                    #La lettre à déjà été testée
+                    elif lettre in lettres_testees:
+                        raise TypeError
+                    #La lettre est valide
                     else:
-                        break
+                        break #On sort de la boucle de test de validité
+
                 except ValueError:
                     print(f"'{lettre}' n'est pas une lettre valide, "
                           "veuillez en entrer une.")
+
+                except TypeError:
+                    print(f"Vous avez déjà essayé la lettre '{lettre}',"
+                          " essayez en une autre..")
+
             lettres_testees.append(lettre)
             tours += 1
 
@@ -130,7 +143,8 @@ def jeu():
                 print(random.choice(["\nBien joué !", "\nBravo !", "\nJoli coup !"]))
                 print(f'La lettre {lettre} est bel et bien dans le mot secret.')
 
-            else: #L'utilisateur n'a pas trouvé de lettre dans le mot secret.
+            # L'utilisateur n'a pas trouvé de lettre dans le mot secret.
+            else:
                 print(random.choice(["\nAïe..",
                                      "\nC'est raté.",
                                      "\nCe n'est pas bon.."]))
