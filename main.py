@@ -1,5 +1,6 @@
 import random
-
+import string
+alphabet = string.ascii_lowercase
 
 def lecture_fichier():
     """Définition  d'une fonction qui lit le fichier
@@ -7,23 +8,26 @@ def lecture_fichier():
 
     # Demande à l'utilisateur s'il possede une liste de mots.
     if input("Avez vous un fichier personnel .txt contenant une liste de mots "
-             "pour jouer ? \n('oui' ou 'non') : ") == "oui":
-        nom_fichier = input("Veuillez entrer son nom (sans l'extention): ")
-    else:
-        nom_fichier = "Liste_de_mots" #Utilisation de la liste originale.
+             "pour jouer ? \n('oui' ou 'non') : ") == "non":
+        #Ouverture, lecture et transformation de la chaines de texte en liste.
+        return open('Liste_de_mots.txt', 'r', encoding='utf-8').read().split()
 
-    # Ouverture du fichier, lecture et transformation de la chaine
-    # de charactères en une liste de mots.
-    liste_mots = open(f'{nom_fichier}.txt', 'r', encoding='utf-8').read().split()
-    return liste_mots
+    #Vérification que le fichier donné par l'utilisateur existe bien
+    while True:
+        nom_fichier = input("Veuillez entrer le nom du fichier : ")
+        try:
+            with (open(f'{nom_fichier}.txt', 'r', encoding='utf-8') as liste_mots):
+                return liste_mots.read().split()
+        except FileNotFoundError:
+            print("Le fichier est introuvable, veuillez reessayer.")
 
 
 def choix_mot(liste):
-    """Définitiojn d'une fonction qui choisit un mot parmi
+    """Définition d'une fonction qui choisit un mot parmi
     la liste fournie et le retourne sans ses accents."""
 
     # Choix d'un mot au hasard dans la liste des mots.
-    mot_a_trouver = liste[random.randint(0, len(liste) - 1)]
+    mot_a_trouver = random.choice(liste)
 
     # Création de deux chaines de charactères contenant les accents communs
     # possibles et leurs équivalents, en veillant à bien faire correspondre les indices.
@@ -88,9 +92,26 @@ def jeu():
                 print(f'\nIl vous reste {vies - erreurs} essais.')
                 print(f'Lettres déjà essayées : {lettres_testees}')
 
+            if (vies - erreurs) == 1 :
+                while jeu_en_cours:
+                    lettre_bonus = random.choice(string.ascii_lowercase)
+                    if lettre_bonus not in mot_a_deviner:
+                        break
 
+                print(f"\nAttention, vous avez presques perdu..."
+                      f"\nVoici un indice : la lettre '{lettre_bonus}' "
+                      "n'est pas dans le mot secret.")
 
-            lettre = input("\nVeuillez entrer une lettre à essayer : ")
+            while True:
+                try:
+                    lettre = input("\nVeuillez entrer une lettre à essayer : ")
+                    if lettre not in alphabet :
+                        raise ValueError
+                    else:
+                        break
+                except ValueError:
+                    print(f"'{lettre}' n'est pas une lettre valide, "
+                          "veuillez en entrer une.")
             lettres_testees.append(lettre)
             tours += 1
 
